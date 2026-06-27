@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Buat crush masa depan akuu ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Sacramento&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4eae1; /* Warna krem pastel estetik */
+            color: #7d4f43;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .card {
+            background: #fffdfa;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px 20px;
+            border-radius: 25px;
+            border: 2px dashed #bfa391;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .hidden { display: none !important; }
+
+        h2 { font-family: 'Sacramento', cursive; font-size: 3rem; margin: 10px 0; color: #b85c5c; }
+        p { font-size: 0.95rem; margin-bottom: 20px; }
+
+        /* Style Halaman PIN */
+        .pin-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .pin-box { width: 45px; height: 45px; text-align: center; font-size: 1.3rem; border: 2px solid #d9c5b2; border-radius: 12px; background: #fff; color: #7d4f43; font-weight: bold; }
+        .btn { background: #b85c5c; color: white; border: none; padding: 12px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #9e4747; }
+        .link-clue { color: #b85c5c; text-decoration: underline; font-size: 0.85rem; cursor: pointer; display: block; margin-top: 15px; }
+
+        /* Style Mini Game */
+        #gameArea { position: relative; width: 100%; height: 200px; background: #faf3eb; border-radius: 15px; border: 1px solid #e6dec9; overflow: hidden; margin-top: 15px; }
+        #heartTarget { position: absolute; font-size: 30px; cursor: pointer; user-select: none; transition: 0.1s; }
+
+        /* Style Amplop */
+        .envelope { font-size: 5rem; cursor: pointer; display: inline-block; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Style Tombol Lari */
+        .btn-container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; position: relative; height: 50px; }
+        #btnGak { position: absolute; background-color: #6c757d; }
+
+        /* Style Halaman Akhir Scroll */
+        .scrollable-content { max-height: 400px; overflow-y: auto; text-align: left; padding: 10px; }
+        .scrollable-content h3 { text-align: center; color: #b85c5c; }
+        .date-info { background: #faf3eb; padding: 15px; border-radius: 15px; margin-bottom: 15px; font-size: 0.9rem; border-left: 4px solid #b85c5c; }
+        .date-info strong { color: #b85c5c; }
+        .letter-text { font-style: italic; font-size: 0.9rem; line-height: 1.6; text-align: justify; white-space: pre-line; }
+
+        /* Custom Alert Pop-up */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 80%; max-width: 300px; }
+    </style>
+</head>
+<body>
+
+    <!-- Musik Latar -->
+    <audio id="bgMusic" loop>
+        <source src="musik.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Modal Alert Kustom -->
+    <div id="customModal" class="modal hidden">
+        <div class="modal-content">
+            <p id="modalText">Clue di sini...</p>
+            <button class="btn" onclick="closeModal()">Oke!</button>
+        </div>
+    </div>
+
+    <!-- CARD UTAMA -->
+    <div class="card">
+        
+        <!-- HALAMAN 1: INPUT PIN -->
+        <div id="pagePin">
+            <h2>rate Edi &lt;3 ‍</h2>
+            <p>Masukkan PIN untuk membuka pesan ini:</p>
+            <div class="pin-container">
+                <input type="password" class="pin-box" maxlength="1" oninput="moveFocus(this, 1)">
+                <input type="password" class="pin-box" maxlength="1" oninput="moveFocus(this, 2)">
+                <input type="password" class="pin-box" maxlength="1" oninput="moveFocus(this, 3)">
+                <input type="password" class="pin-box" maxlength="1" oninput="moveFocus(this, 4)">
+            </div>
+            <button class="btn" onclick="checkPin()">Open Me</button>
+            <span class="link-clue" onclick="showClue()">need a clue?</span>
+        </div>
+
+        <!-- HALAMAN 2: GAME TANGKAP HATI -->
+        <div id="pageGame" class="hidden">
+            <p style="background: #fff3cd; padding: 5px; border-radius: 10px; font-size: 0.85rem;">yeyy, kok kamu bisa tau sii??</p>
+            <p><b>km main game dulu bentar yy</b><br>Tangkap (klik) hati ini 3 kali buat lanjut ❤️</p>
+            <p>Skor: <span id="scoreText">0/3</span></p>
+            <div id="gameArea">
+                <div id="heartTarget" onclick="catchHeart()">❤️</div>
+            </div>
+        </div>
+
+        <!-- HALAMAN 3: AMPLOP SURAT -->
+        <div id="pageEnvelope" class="hidden">
+            <p>Ada surat buat kamu. Klik amplopnya!</p>
+            <div class="envelope" onclick="openEnvelope()">✉️</div>
+        </div>
+
+        <!-- HALAMAN 4: AJAKAN DINNER -->
+        <div id="pageQuestion" class="hidden">
+            <p>wes apik rung???</p>
+            <div class="btn-container">
+                <button class="btn" id="btnMau" onclick="nextPage()">yeyeyeyeyaya</button>
+                <button class="btn" id="btnGak" onmouseover="kabur()" onclick="kabur()">hmm, belumm</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN 5: DETAIL DATE (SCROLL) -->
+        <div id="pageFinal" class="hidden">
+            <div class="scrollable-content">
+                <h3>mntp mksh edi</h3>
+                <p style="text-align:center;">yeyyy 😎 <br> <b>keren to aku, xiixixix</b> ~~~~</p>
+                
+                <!-- Info Acara -->
+                <div class="date-info">
+                    📍 <strong>Location:</strong><br>adadeh<br><br>
+                    ⏰ <strong>Time & Date:</strong><br>18 April 2026, 19:00 WIB<br><br>
+                    👗 <strong>Dresscode:</strong><br>karep karepmu wae
+                </div>
+
+                <!-- Pesan Panjang -->
+                <p class="letter-text">
+                    Naninunaninu
+
+                    wleeeee
+
+                    ikhirrrr <3
+                    
+                    — Endhy <3
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- KONFIGURASI ---
+        const PIN_BENAR = "1804"; // Ganti dengan tanggal jadian / PIN bebas (4 angka)
+        const CLUE_TEKS = "Clue: tanggal sama bulan lahir aku ";
+
+        // Kontrol Musik Otomatis Jalan Saat Klik Pertama
+        document.body.addEventListener('click', function() {
+            const music = document.getElementById("bgMusic");
+            if(music.paused) music.play();
+        }, { once: true });
+
+        // Fungsi Auto Focus Box PIN
+        function moveFocus(current, index) {
+            if (current.value.length >= 1) {
+                const inputs = document.querySelectorAll('.pin-box');
+                if (index < inputs.length) inputs[index].focus();
+            }
+        }
+
+        // Fungsi Pop Up Modal
+        function showModal(text) {
+            document.getElementById("modalText").innerText = text;
+            document.getElementById("customModal").classList.remove("hidden");
+        }
+        function closeModal() { document.getElementById("customModal").classList.add("hidden"); }
+        function showClue() { showModal(CLUE_TEKS); }
+
+        // Cek PIN
+        function checkPin() {
+            const inputs = document.querySelectorAll('.pin-box');
+            let userPin = "";
+            inputs.forEach(input => userPin += input.value);
+
+            if (userPin === PIN_BENAR) {
+                document.getElementById("pagePin").classList.add("hidden");
+                document.getElementById("pageGame").classList.remove("hidden");
+                moveHeart();
+            } else {
+                showModal("Eitss PIN salah! lihat clue deh kalo gabisa");
+                inputs.forEach(input => input.value = "");
+                inputs[0].focus();
+            }
+        }
+
+        // Game Tangkap Hati
+        let score = 0;
+        function moveHeart() {
+            const area = document.getElementById("gameArea");
+            const heart = document.getElementById("heartTarget");
+            const maxX = area.clientWidth - 40;
+            const maxY = area.clientHeight - 40;
+            heart.style.left = Math.random() * maxX + "px";
+            heart.style.top = Math.random() * maxY + "px";
+        }
+        function catchHeart() {
+            score++;
+            document.getElementById("scoreText").innerText = score + "/3";
+            if (score >= 3) {
+                document.getElementById("pageGame").classList.add("hidden");
+                document.getElementById("pageEnvelope").classList.remove("hidden");
+            } else {
+                moveHeart();
+            }
+        }
+
+        // Buka Amplop
+        function openEnvelope() {
+            const env = document.querySelector(".envelope");
+            env.innerHTML = "waitt";
+            setTimeout(() => {
+                document.getElementById("pageEnvelope").classList.add("hidden");
+                document.getElementById("pageQuestion").classList.remove("hidden");
+                // Atur posisi awal tombol hmmm
+                document.getElementById("btnGak").style.right = "30px";
+            }, 800);
+        }
+
+        // Tombol Kabur (Anti Tolak)
+        function kabur() {
+            const btnGak = document.getElementById("btnGak");
+            const x = Math.random() * (window.innerWidth - btnGak.offsetWidth - 40);
+            const y = Math.random() * (window.innerHeight - btnGak.offsetHeight - 40);
+            btnGak.style.position = "fixed";
+            btnGak.style.left = x + "px";
+            btnGak.style.top = y + "px";
+            
+            // Iseng kasih alert kalau dia maksa klik
+            if(Math.random() < 0.3) {
+                showModal("eittss gabolee nolak! 😜 Tombol No lagi rusak 🛑");
+            }
+        }
+
+        // Menuju Halaman Akhir
+        function nextPage() {
+            document.getElementById("pageQuestion").classList.add("hidden");
+            document.getElementById("pageFinal").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
